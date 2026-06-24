@@ -3,9 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>cornballs.lol - TEST PAGE</title>
+    <title>cornballs.lol</title>
     <style>
-        /* Reset and full-screen setup */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap');
+
         * {
             margin: 0;
             padding: 0;
@@ -15,46 +16,160 @@
         body, html {
             width: 100%;
             height: 100%;
-            overflow: hidden;
+            background-color: #0b0f19;
+            font-family: 'Inter', sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
-            font-family: 'Impact', 'Arial Black', sans-serif;
-            /* Fast flashing background animation */
-            animation: flashBackground 0.1s infinite;
+            overflow: hidden;
+            position: relative;
         }
 
-        h1 {
-            font-size: 8vw;
-            text-transform: uppercase;
-            letter-spacing: 2px;
+        /* Ambient Glow Background */
+        .glow {
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(255, 170, 0, 0.08) 0%, transparent 70%);
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        /* Center Content Box */
+        .container {
             text-align: center;
-            padding: 20px;
-            /* Text color cycling animation */
-            animation: flashText 0.15s infinite;
-            text-shadow: 5px 5px 0px #000;
+            z-index: 2;
+            animation: smoothFadeIn 1.5s cubic-bezier(0.25, 1, 0.5, 1) forwards;
         }
 
-        /* Background color keyframes */
-        @keyframes flashBackground {
-            0% { background-color: #ff0000; }
-            25% { background-color: #00ff00; }
-            50% { background-color: #0000ff; }
-            75% { background-color: #ffff00; }
-            100% { background-color: #ff00ff; }
+        /* Status Badge */
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            background: rgba(255, 170, 0, 0.08);
+            border: 1px solid rgba(255, 170, 0, 0.25);
+            color: #ffaa00;
+            padding: 8px 18px;
+            border-radius: 100px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-bottom: 1.5rem;
         }
 
-        /* Text color keyframes */
-        @keyframes flashText {
-            0% { color: #ffffff; transform: scale(1); }
-            50% { color: #00ffff; transform: scale(1.05); }
-            100% { color: #ff007f; transform: scale(1); }
+        .status-badge::before {
+            content: '';
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background-color: #ffaa00;
+            border-radius: 50%;
+            margin-right: 10px;
+            animation: pulse 2s infinite ease-in-out;
+        }
+
+        /* Clean Minimal Logo */
+        .logo {
+            font-size: 4rem;
+            font-weight: 800;
+            letter-spacing: -1.5px;
+            color: #ffffff;
+        }
+
+        .logo span {
+            color: #ffaa00;
+        }
+
+        /* Construction Tapes Master Style */
+        .tape {
+            position: absolute;
+            width: 160%;
+            height: 60px;
+            background: repeating-linear-gradient(
+                -45deg,
+                #ffaa00,
+                #ffaa00 25px,
+                #181510 25px,
+                #181510 50px
+            );
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 5;
+            opacity: 0;
+        }
+
+        .tape-text {
+            color: #ffffff;
+            font-weight: 800;
+            font-size: 1.1rem;
+            letter-spacing: 5px;
+            text-transform: uppercase;
+            background: rgba(11, 15, 25, 0.85);
+            padding: 4px 25px;
+            backdrop-filter: blur(5px);
+            border-radius: 4px;
+        }
+
+        /* Tape 1: Slants down left-to-right */
+        .tape-1 {
+            transform: rotate(-10deg) translate(-50px, -300px);
+            animation: smoothSlide1 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            animation-delay: 0.2s;
+            bottom: 25%;
+        }
+
+        /* Tape 2: Slants up left-to-right (Cross Layer) */
+        .tape-2 {
+            transform: rotate(8deg) translate(50px, 300px);
+            animation: smoothSlide2 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            animation-delay: 0.4s;
+            top: 25%;
+        }
+
+        /* Smooth Transition Keyframes */
+        @keyframes smoothSlide1 {
+            0% { transform: rotate(-10deg) translateY(-200px); opacity: 0; }
+            100% { transform: rotate(-8deg) translateY(0); opacity: 1; }
+        }
+
+        @keyframes smoothSlide2 {
+            0% { transform: rotate(8deg) translateY(200px); opacity: 0; }
+            100% { transform: rotate(6deg) translateY(0); opacity: 1; }
+        }
+
+        @keyframes smoothFadeIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.3; transform: scale(0.9); }
+            50% { opacity: 1; transform: scale(1.1); }
         }
     </style>
 </head>
 <body>
 
-    <h1>cornballs.lol</h1>
+    <div class="glow"></div>
+
+    <!-- Top Left-to-Right Tape Layer -->
+    <div class="tape tape-1">
+        <div class="tape-text">Under Construction</div>
+    </div>
+
+    <!-- Bottom Right-to-Left Cross Tape Layer -->
+    <div class="tape tape-2">
+        <div class="tape-text">Under Construction</div>
+    </div>
+
+    <!-- Main Clean Core Content -->
+    <div class="container">
+        <div class="status-badge">Active & Registered</div>
+        <h1 class="logo">cornballs<span>.lol</span></h1>
+    </div>
 
 </body>
 </html>
