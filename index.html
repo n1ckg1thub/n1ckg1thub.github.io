@@ -1,175 +1,274 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>cornballs.lol</title>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap');
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>cornballs.lol</title>
+  <style>
+    :root {
+      --bg: #0a0a0c;
+      --card-bg: #121216;
+      --border: #23232a;
+      --text: #f3f4f6;
+      --text-muted: #8e9099;
+      --accent-yellow: #facc15;
+      --accent-pink: #f43f5e;
+      --ease: cubic-bezier(0.16, 1, 0.3, 1);
+    }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
-        body, html {
-            width: 100%;
-            height: 100%;
-            background-color: #0b0f19;
-            font-family: 'Inter', sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            overflow: hidden;
-            position: relative;
-        }
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      overflow-x: hidden;
+      padding: 24px;
+    }
 
-        /* Ambient Glow Background */
-        .glow {
-            position: absolute;
-            width: 600px;
-            height: 600px;
-            background: radial-gradient(circle, rgba(255, 170, 0, 0.08) 0%, transparent 70%);
-            z-index: 1;
-            pointer-events: none;
-        }
+    /* --- SITE HEADER --- */
+    header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
 
-        /* Center Content Box */
-        .container {
-            text-align: center;
-            z-index: 2;
-            animation: smoothFadeIn 1.5s cubic-bezier(0.25, 1, 0.5, 1) forwards;
-        }
+    header h1 {
+      font-size: 2.5rem;
+      font-weight: 900;
+      letter-spacing: -0.03em;
+      background: linear-gradient(to right, var(--accent-yellow), var(--accent-pink));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
 
-        /* Status Badge */
-        .status-badge {
-            display: inline-flex;
-            align-items: center;
-            background: rgba(255, 170, 0, 0.08);
-            border: 1px solid rgba(255, 170, 0, 0.25);
-            color: #ffaa00;
-            padding: 8px 18px;
-            border-radius: 100px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            margin-bottom: 1.5rem;
-        }
+    /* --- MYSTERY CONTAINER --- */
+    .mystery-wrapper {
+      position: relative;
+      width: 100%;
+      max-width: 500px;
+    }
 
-        .status-badge::before {
-            content: '';
-            display: inline-block;
-            width: 8px;
-            height: 8px;
-            background-color: #ffaa00;
-            border-radius: 50%;
-            margin-right: 10px;
-            animation: pulse 2s infinite ease-in-out;
-        }
+    /* --- THE UNREVEALED INITIATION STAGE --- */
+    .gate-card {
+      background-color: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 40px 24px;
+      text-align: center;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+      transition: opacity 0.3s var(--ease), transform 0.3s var(--ease);
+    }
 
-        /* Clean Minimal Logo */
-        .logo {
-            font-size: 4rem;
-            font-weight: 800;
-            letter-spacing: -1.5px;
-            color: #ffffff;
-        }
+    .gate-icon {
+      font-size: 3rem;
+      margin-bottom: 16px;
+      display: inline-block;
+    }
 
-        .logo span {
-            color: #ffaa00;
-        }
+    .gate-card h2 {
+      font-size: 1.35rem;
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
 
-        /* Construction Tapes Master Style */
-        .tape {
-            position: absolute;
-            width: 160%;
-            height: 60px;
-            background: repeating-linear-gradient(
-                -45deg,
-                #ffaa00,
-                #ffaa00 25px,
-                #181510 25px,
-                #181510 50px
-            );
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 5;
-            opacity: 0;
-        }
+    .gate-card p {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      line-height: 1.6;
+      margin-bottom: 28px;
+    }
 
-        .tape-text {
-            color: #ffffff;
-            font-weight: 800;
-            font-size: 1.1rem;
-            letter-spacing: 5px;
-            text-transform: uppercase;
-            background: rgba(11, 15, 25, 0.85);
-            padding: 4px 25px;
-            backdrop-filter: blur(5px);
-            border-radius: 4px;
-        }
+    .reveal-btn {
+      background-color: var(--text);
+      color: var(--bg);
+      border: none;
+      padding: 14px 28px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      border-radius: 30px;
+      cursor: pointer;
+      width: 100%;
+      transition: transform 0.2s var(--ease), background-color 0.2s var(--ease);
+    }
 
-        /* Tape 1: Slants down left-to-right */
-        .tape-1 {
-            transform: rotate(-10deg) translate(-50px, -300px);
-            animation: smoothSlide1 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-            animation-delay: 0.2s;
-            bottom: 25%;
-        }
+    .reveal-btn:hover {
+      background-color: var(--accent-yellow);
+      transform: translateY(-2px);
+    }
 
-        /* Tape 2: Slants up left-to-right (Cross Layer) */
-        .tape-2 {
-            transform: rotate(8deg) translate(50px, 300px);
-            animation: smoothSlide2 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-            animation-delay: 0.4s;
-            top: 25%;
-        }
+    /* --- THE GRAND CORNBALL REVEAL DISPLAY --- */
+    .dossier-card {
+      display: none;
+      background-color: var(--card-bg);
+      border: 2px solid var(--accent-pink);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 30px 60px rgba(244, 63, 94, 0.15);
+      animation: popIn 0.5s var(--ease) forwards;
+    }
 
-        /* Smooth Transition Keyframes */
-        @keyframes smoothSlide1 {
-            0% { transform: rotate(-10deg) translateY(-200px); opacity: 0; }
-            100% { transform: rotate(-8deg) translateY(0); opacity: 1; }
-        }
+    @keyframes popIn {
+      0% { transform: scale(0.92) translateY(20px); opacity: 0; }
+      100% { transform: scale(1) translateY(0); opacity: 1; }
+    }
 
-        @keyframes smoothSlide2 {
-            0% { transform: rotate(8deg) translateY(200px); opacity: 0; }
-            100% { transform: rotate(6deg) translateY(0); opacity: 1; }
-        }
+    .banner-ticker {
+      background: linear-gradient(to right, var(--accent-pink), #9333ea);
+      padding: 10px;
+      overflow: hidden;
+      white-space: nowrap;
+    }
 
-        @keyframes smoothFadeIn {
-            from { opacity: 0; transform: scale(0.95); }
-            to { opacity: 1; transform: scale(1); }
-        }
+    .banner-ticker div {
+      display: inline-block;
+      font-size: 0.75rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: #fff;
+      animation: ticker 15s linear infinite;
+    }
 
-        @keyframes pulse {
-            0%, 100% { opacity: 0.3; transform: scale(0.9); }
-            50% { opacity: 1; transform: scale(1.1); }
-        }
-    </style>
+    @keyframes ticker {
+      0% { transform: translateX(100%); }
+      100% { transform: translateX(-100%); }
+    }
+
+    .dossier-content {
+      padding: 48px 32px;
+      text-align: center;
+    }
+
+    .avatar-frame {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent-yellow), var(--accent-pink));
+      margin: 0 auto 20px auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 20px rgba(250, 204, 21, 0.3);
+    }
+
+    .avatar-inside {
+      width: 112px;
+      height: 112px;
+      border-radius: 50%;
+      background-color: var(--card-bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3rem;
+    }
+
+    .dossier-content h2 {
+      font-size: 2.2rem;
+      font-weight: 800;
+      line-height: 1.3;
+      margin-bottom: 4px;
+    }
+
+    .sub-text {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      font-weight: 400;
+    }
+
+    /* --- CONFETTI PARTICLE CANVAS SYSTEM --- */
+    .confetti {
+      position: fixed;
+      width: 8px;
+      height: 8px;
+      top: -10px;
+      border-radius: 2px;
+      z-index: 1000;
+      animation: gravity fall linear forwards;
+    }
+
+    @keyframes fall {
+      0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+      90% { opacity: 1; }
+      100% { transform: translateY(105vh) rotate(720deg); opacity: 0; }
+    }
+  </style>
 </head>
 <body>
 
-    <div class="glow"></div>
+  <header>
+    <h1>cornballs.lol</h1>
+  </header>
 
-    <!-- Top Left-to-Right Tape Layer -->
-    <div class="tape tape-1">
-        <div class="tape-text">Under Construction</div>
+  <div class="mystery-wrapper">
+    
+    <!-- STAGE 1: HIDDEN STATE -->
+    <div class="gate-card" id="gate-block">
+      <div class="gate-icon">🔒</div>
+      <h2>The Year's Biggest Cornball</h2>
+      <p>Calculated using our core data pipeline. By parsing real-time behavior telemetry, cross-referencing systemic metadata patterns, and running multi-layered heuristic models across historical interaction profiles, the system has successfully isolated the exact outlier index. Click below to unmask the target.</p>
+      <button class="reveal-btn" onclick="triggerReveal()">Reveal the Truth</button>
     </div>
 
-    <!-- Bottom Right-to-Left Cross Tape Layer -->
-    <div class="tape tape-2">
-        <div class="tape-text">Under Construction</div>
+    <!-- STAGE 2: SURPRISE DOSSIER STATE -->
+    <div class="dossier-card" id="dossier-block">
+      <div class="banner-ticker">
+        <div>🎉 ALERT: YOU HAVE BEEN SELECTED AS CORNBALL OF THE YEAR 🎉</div>
+      </div>
+      
+      <div class="dossier-content">
+        <div class="avatar-frame">
+          <div class="avatar-inside">🫵</div>
+        </div>
+        
+        <h2>IT'S YOU</h2>
+        <p class="sub-text"></p>
+      </div>
     </div>
 
-    <!-- Main Clean Core Content -->
-    <div class="container">
-        <div class="status-badge">Active & Registered</div>
-        <h1 class="logo">cornballs<span>.lol</span></h1>
-    </div>
+  </div>
 
+  <script>
+    function triggerReveal() {
+      // Transition out the gate block and bring in the surprise dossier
+      document.getElementById('gate-block').style.display = 'none';
+      document.getElementById('dossier-block').style.display = 'block';
+
+      // Deploy the modern hardware-accelerated confetti matrix
+      const palette = ['#facc15', '#f43f5e', '#3b82f6', '#10b981', '#a855f7', '#6366f1'];
+      const totalParticles = 120;
+
+      for (let i = 0; i < totalParticles; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'confetti';
+        
+        // Distribute along x-axis and randomize sizing
+        particle.style.left = Math.random() * 100 + 'vw';
+        particle.style.backgroundColor = palette[Math.floor(Math.random() * palette.length)];
+        
+        // Randomize drop speed and spin dynamics
+        const duration = Math.random() * 2 + 2; // 2s - 4s
+        const delay = Math.random() * 0.5;
+        particle.style.animationName = 'fall';
+        particle.style.animationDuration = duration + 's';
+        particle.style.animationDelay = delay + 's';
+        
+        document.body.appendChild(particle);
+
+        // Remove element from the stack structure once it runs out of viewport bounds
+        setTimeout(() => {
+          particle.remove();
+        }, (duration + delay) * 1000);
+      }
+    }
+  </script>
 </body>
 </html>
