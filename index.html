@@ -153,7 +153,13 @@
         });
 
         function initializeNetwork() {
-            client = mqtt.connect("wss://broker.hivemq.com:8000/mqtt");
+            // FIX: Generate a completely unique network client ID for every separate device connection
+            const customClientId = "client_" + myNick + "_" + Math.floor(Math.random() * 10000);
+
+            client = mqtt.connect("wss://broker.hivemq.com:8000/mqtt", {
+                clientId: customClientId,
+                clean: true
+            });
 
             client.on("connect", () => {
                 client.subscribe(baseTopic);
