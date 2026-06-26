@@ -1,274 +1,271 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>cornballs.lol</title>
-  <style>
-    :root {
-      --bg: #0a0a0c;
-      --card-bg: #121216;
-      --border: #23232a;
-      --text: #f3f4f6;
-      --text-muted: #8e9099;
-      --accent-yellow: #facc15;
-      --accent-pink: #f43f5e;
-      --ease: cubic-bezier(0.16, 1, 0.3, 1);
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IRC Chat</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: monospace; }
+        body { background-color: #000000; color: #ffffff; display: flex; flex-direction: column; height: 100vh; font-size: 14px; }
+        
+        /* Setup Screen */
+        .setup-screen { position: fixed; inset: 0; background: #000; display: flex; justify-content: center; align-items: center; z-index: 100; }
+        .setup-box { border: 1px solid #ffffff; padding: 20px; width: 350px; text-align: center; }
+        .setup-box input { width: 100%; background: #000; border: 1px solid #ffffff; padding: 5px; color: #fff; margin: 15px 0; font-family: monospace; }
+        .setup-box button { background: #000; border: 1px solid #ffffff; color: #fff; padding: 5px 15px; cursor: pointer; font-family: monospace; }
+        .setup-box button:hover { background: #ffffff; color: #000; }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+        /* Top Status Bar */
+        .status-bar { border-bottom: 1px solid #ffffff; padding: 5px 10px; background-color: #000; color: #00ff00; }
 
-    body {
-      background-color: var(--bg);
-      color: var(--text);
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      min-height: 100vh;
-      overflow-x: hidden;
-      padding: 24px;
-    }
+        /* Main Viewport */
+        .main-layout { display: flex; flex-grow: 1; overflow: hidden; }
+        .chat-area { flex-grow: 1; display: flex; flex-direction: column; }
+        .messages-container { flex-grow: 1; padding: 10px; overflow-y: auto; display: flex; flex-direction: column; gap: 2px; }
+        
+        /* Sidebar */
+        .sidebar { width: 180px; border-left: 1px solid #ffffff; display: flex; flex-direction: column; padding: 10px; }
+        .sidebar-title { color: #00ffff; margin-bottom: 5px; text-decoration: underline; }
+        .user-list { list-style: none; }
+        .user-item { margin-bottom: 3px; }
 
-    /* --- SITE HEADER --- */
-    header {
-      text-align: center;
-      margin-bottom: 40px;
-    }
+        /* Reply Preview Indicator */
+        .reply-bar { background: #222; padding: 3px 10px; display: none; justify-content: space-between; font-size: 12px; border-top: 1px dashed #fff; color: #aaa; }
+        .cancel-reply { cursor: pointer; color: #ff0000; margin-left: 10px; }
 
-    header h1 {
-      font-size: 2.5rem;
-      font-weight: 900;
-      letter-spacing: -0.03em;
-      background: linear-gradient(to right, var(--accent-yellow), var(--accent-pink));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
+        /* Input Deck */
+        .input-area { padding: 10px; border-top: 1px solid #ffffff; display: flex; gap: 5px; }
+        #message-input { flex-grow: 1; background: #000; border: 1px solid #ffffff; color: #ffffff; padding: 5px; outline: none; font-family: monospace; }
+        #send-btn { background: #000; border: 1px solid #ffffff; color: #ffffff; padding: 0 15px; cursor: pointer; font-family: monospace; }
+        #send-btn:hover { background: #fff; color: #000; }
 
-    /* --- MYSTERY CONTAINER --- */
-    .mystery-wrapper {
-      position: relative;
-      width: 100%;
-      max-width: 500px;
-    }
-
-    /* --- THE UNREVEALED INITIATION STAGE --- */
-    .gate-card {
-      background-color: var(--card-bg);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 40px 24px;
-      text-align: center;
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
-      transition: opacity 0.3s var(--ease), transform 0.3s var(--ease);
-    }
-
-    .gate-icon {
-      font-size: 3rem;
-      margin-bottom: 16px;
-      display: inline-block;
-    }
-
-    .gate-card h2 {
-      font-size: 1.35rem;
-      font-weight: 700;
-      margin-bottom: 12px;
-    }
-
-    .gate-card p {
-      color: var(--text-muted);
-      font-size: 0.9rem;
-      line-height: 1.6;
-      margin-bottom: 28px;
-    }
-
-    .reveal-btn {
-      background-color: var(--text);
-      color: var(--bg);
-      border: none;
-      padding: 14px 28px;
-      font-size: 0.95rem;
-      font-weight: 600;
-      border-radius: 30px;
-      cursor: pointer;
-      width: 100%;
-      transition: transform 0.2s var(--ease), background-color 0.2s var(--ease);
-    }
-
-    .reveal-btn:hover {
-      background-color: var(--accent-yellow);
-      transform: translateY(-2px);
-    }
-
-    /* --- THE GRAND CORNBALL REVEAL DISPLAY --- */
-    .dossier-card {
-      display: none;
-      background-color: var(--card-bg);
-      border: 2px solid var(--accent-pink);
-      border-radius: 16px;
-      overflow: hidden;
-      box-shadow: 0 30px 60px rgba(244, 63, 94, 0.15);
-      animation: popIn 0.5s var(--ease) forwards;
-    }
-
-    @keyframes popIn {
-      0% { transform: scale(0.92) translateY(20px); opacity: 0; }
-      100% { transform: scale(1) translateY(0); opacity: 1; }
-    }
-
-    .banner-ticker {
-      background: linear-gradient(to right, var(--accent-pink), #9333ea);
-      padding: 10px;
-      overflow: hidden;
-      white-space: nowrap;
-    }
-
-    .banner-ticker div {
-      display: inline-block;
-      font-size: 0.75rem;
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      color: #fff;
-      animation: ticker 15s linear infinite;
-    }
-
-    @keyframes ticker {
-      0% { transform: translateX(100%); }
-      100% { transform: translateX(-100%); }
-    }
-
-    .dossier-content {
-      padding: 48px 32px;
-      text-align: center;
-    }
-
-    .avatar-frame {
-      width: 120px;
-      height: 120px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, var(--accent-yellow), var(--accent-pink));
-      margin: 0 auto 20px auto;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 0 20px rgba(250, 204, 21, 0.3);
-    }
-
-    .avatar-inside {
-      width: 112px;
-      height: 112px;
-      border-radius: 50%;
-      background-color: var(--card-bg);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 3rem;
-    }
-
-    .dossier-content h2 {
-      font-size: 2.2rem;
-      font-weight: 800;
-      line-height: 1.3;
-      margin-bottom: 4px;
-    }
-
-    .sub-text {
-      color: var(--text-muted);
-      font-size: 0.95rem;
-      font-weight: 400;
-    }
-
-    /* --- CONFETTI PARTICLE CANVAS SYSTEM --- */
-    .confetti {
-      position: fixed;
-      width: 8px;
-      height: 8px;
-      top: -10px;
-      border-radius: 2px;
-      z-index: 1000;
-      animation: gravity fall linear forwards;
-    }
-
-    @keyframes fall {
-      0% { transform: translateY(0) rotate(0deg); opacity: 1; }
-      90% { opacity: 1; }
-      100% { transform: translateY(105vh) rotate(720deg); opacity: 0; }
-    }
-  </style>
+        /* Chat Output Syntax */
+        .msg-line { line-height: 1.3; }
+        .msg-time { color: #555555; margin-right: 5px; }
+        .msg-sender { color: #00ffff; font-weight: bold; cursor: pointer; }
+        .msg-sender.self { color: #00ff00; }
+        .msg-text { color: #ffffff; }
+        .msg-reply-line { color: #888888; font-size: 12px; display: block; margin-left: 15px; }
+        .msg-system { color: #ffff00; }
+        .reply-btn { color: #555; cursor: pointer; margin-left: 8px; font-size: 11px; }
+        .msg-line:hover .reply-btn { color: #00ffff; }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mqtt/4.3.7/mqtt.min.js"></script>
 </head>
 <body>
 
-  <header>
-    <h1>cornballs.lol</h1>
-  </header>
-
-  <div class="mystery-wrapper">
-    
-    <!-- STAGE 1: HIDDEN STATE -->
-    <div class="gate-card" id="gate-block">
-      <div class="gate-icon">🔒</div>
-      <h2>The Year's Biggest Cornball</h2>
-      <p>Calculated using our core data pipeline. By parsing real-time behavior telemetry, cross-referencing systemic metadata patterns, and running multi-layered heuristic models across historical interaction profiles, the system has successfully isolated the exact outlier index. Click below to unmask the target.</p>
-      <button class="reveal-btn" onclick="triggerReveal()">Reveal the Truth</button>
-    </div>
-
-    <!-- STAGE 2: SURPRISE DOSSIER STATE -->
-    <div class="dossier-card" id="dossier-block">
-      <div class="banner-ticker">
-        <div>🎉 ALERT: YOU HAVE BEEN SELECTED AS CORNBALL OF THE YEAR 🎉</div>
-      </div>
-      
-      <div class="dossier-content">
-        <div class="avatar-frame">
-          <div class="avatar-inside">🫵</div>
+    <div class="setup-screen" id="setup-screen">
+        <div class="setup-box">
+            <div>*** IRC ENCRYPTION GATEWAY ***</div>
+            <input type="password" id="room-key-input" placeholder="Enter Channel Key..." autocomplete="off">
+            <button id="connect-btn">JOIN #GENERAL</button>
         </div>
-        
-        <h2>IT'S YOU</h2>
-        <p class="sub-text"></p>
-      </div>
     </div>
 
-  </div>
+    <div class="status-bar" id="status-display">
+        [status] Awaiting channel key authorization...
+    </div>
 
-  <script>
-    function triggerReveal() {
-      // Transition out the gate block and bring in the surprise dossier
-      document.getElementById('gate-block').style.display = 'none';
-      document.getElementById('dossier-block').style.display = 'block';
+    <div class="main-layout">
+        <main class="chat-area">
+            <div class="messages-container" id="messages"></div>
+            
+            <div class="reply-bar" id="reply-bar">
+                <span>[Replying to &lt;<span id="reply-target"></span>&gt;]</span>
+                <span class="cancel-reply" id="cancel-reply-btn">[cancel]</span>
+            </div>
 
-      // Deploy the modern hardware-accelerated confetti matrix
-      const palette = ['#facc15', '#f43f5e', '#3b82f6', '#10b981', '#a855f7', '#6366f1'];
-      const totalParticles = 120;
+            <div class="input-area">
+                <input type="text" id="message-input" placeholder="Type message..." autocomplete="off" disabled>
+                <button id="send-btn" disabled>SEND</button>
+            </div>
+        </main>
 
-      for (let i = 0; i < totalParticles; i++) {
-        const particle = document.createElement('div');
-        particle.className = 'confetti';
-        
-        // Distribute along x-axis and randomize sizing
-        particle.style.left = Math.random() * 100 + 'vw';
-        particle.style.backgroundColor = palette[Math.floor(Math.random() * palette.length)];
-        
-        // Randomize drop speed and spin dynamics
-        const duration = Math.random() * 2 + 2; // 2s - 4s
-        const delay = Math.random() * 0.5;
-        particle.style.animationName = 'fall';
-        particle.style.animationDuration = duration + 's';
-        particle.style.animationDelay = delay + 's';
-        
-        document.body.appendChild(particle);
+        <aside class="sidebar">
+            <div class="sidebar-title">Users (#general)</div>
+            <ul class="user-list" id="users"></ul>
+        </aside>
+    </div>
 
-        // Remove element from the stack structure once it runs out of viewport bounds
-        setTimeout(() => {
-          particle.remove();
-        }, (duration + delay) * 1000);
-      }
-    }
-  </script>
+    <script>
+        function generateNick(length = 8) {
+            const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+            let result = '';
+            for (let i = 0; i < length; i++) result += chars.charAt(Math.floor(Math.random() * chars.length));
+            return result;
+        }
+
+        const myNick = generateNick();
+        let cryptoKey = null;
+        let client = null;
+        let activePeers = {}; 
+        let replyTargetData = null; 
+        const baseTopic = "irc/clean/mesh/general/v1";
+
+        // AES-GCM-256 Crypto Core
+        async function deriveKey(passphrase) {
+            const encoder = new TextEncoder();
+            const salt = encoder.encode("IrcStaticSaltValue");
+            const baseKey = await crypto.subtle.importKey("raw", encoder.encode(passphrase), { name: "PBKDF2" }, false, ["deriveKey"]);
+            return crypto.subtle.deriveKey(
+                { name: "PBKDF2", salt: salt, iterations: 100000, hash: "SHA-256" },
+                baseKey,
+                { name: "AES-GCM", length: 256 },
+                false,
+                ["encrypt", "decrypt"]
+            );
+        }
+
+        async function encryptMessage(text, replyData = null) {
+            const encoder = new TextEncoder();
+            const iv = crypto.getRandomValues(new Uint8Array(12));
+            const payload = JSON.stringify({ text, reply: replyData });
+            const encryptedRaw = await crypto.subtle.encrypt({ name: "AES-GCM", iv: iv }, cryptoKey, encoder.encode(payload));
+            const combined = new Uint8Array(iv.length + encryptedRaw.byteLength);
+            combined.set(iv, 0);
+            combined.set(new Uint8Array(encryptedRaw), iv.length);
+            return Array.from(combined).map(b => b.toString(16).padStart(2, '0')).join('');
+        }
+
+        async function decryptMessage(hexString) {
+            try {
+                const combined = new Uint8Array(hexString.match(/.{1,2}/g).map(byte => parseInt(byte, 16)));
+                const iv = combined.slice(0, 12);
+                const encryptedRaw = combined.slice(12);
+                const decryptedRaw = await crypto.subtle.decrypt({ name: "AES-GCM", iv: iv }, cryptoKey, encryptedRaw);
+                return JSON.parse(new TextDecoder().decode(decryptedRaw));
+            } catch (e) {
+                return { text: "[Decryption Error: Key mismatch]", reply: null };
+            }
+        }
+
+        // Initialize Screen Event
+        document.getElementById("connect-btn").addEventListener("click", async () => {
+            const passInput = document.getElementById("room-key-input").value;
+            if (!passInput) return alert("Key required.");
+            
+            cryptoKey = await deriveKey(passInput);
+            document.getElementById("setup-screen").style.display = "none";
+            document.getElementById("message-input").removeAttribute("disabled");
+            document.getElementById("send-btn").removeAttribute("disabled");
+
+            initializeNetwork();
+        });
+
+        function initializeNetwork() {
+            client = mqtt.connect("wss://broker.hivemq.com:8000/mqtt");
+
+            client.on("connect", () => {
+                client.subscribe(baseTopic);
+                document.getElementById("status-display").textContent = `*** Joins: ${myNick} (authenticated)`;
+                sendSignal("presence");
+            });
+
+            client.on("message", async (topic, packetBuffer) => {
+                try {
+                    const incoming = JSON.parse(packetBuffer.toString());
+                    if (incoming.sender === myNick) return;
+
+                    if (incoming.type === "signal") {
+                        if (incoming.action === "presence") {
+                            activePeers[incoming.sender] = Date.now();
+                            updateSidebarUI();
+                        }
+                    } else if (incoming.type === "data") {
+                        const decrypted = await decryptMessage(incoming.payload);
+                        renderMessage(incoming.sender, decrypted.text, decrypted.reply, false);
+                    }
+                } catch(e) {}
+            });
+
+            setInterval(() => sendSignal("presence"), 4000);
+            setInterval(pruneStalePeers, 2000);
+        }
+
+        function sendSignal(action) {
+            if (!client) return;
+            client.publish(baseTopic, JSON.stringify({ type: "signal", action, sender: myNick }));
+        }
+
+        function pruneStalePeers() {
+            const now = Date.now();
+            let changed = false;
+            for (let peer in activePeers) {
+                if (now - activePeers[peer] > 10000) {
+                    delete activePeers[peer];
+                    changed = true;
+                }
+            }
+            if (changed) updateSidebarUI();
+        }
+
+        const messagesContainer = document.getElementById("messages");
+        const userList = document.getElementById("users");
+        const msgInput = document.getElementById("message-input");
+        const replyBar = document.getElementById("reply-bar");
+
+        function updateSidebarUI() {
+            userList.innerHTML = `<li class="user-item" style="color:#00ff00;">@${myNick}</li>`;
+            for (let peer in activePeers) {
+                userList.innerHTML += `<li class="user-item">&nbsp;${peer}</li>`;
+            }
+        }
+
+        async function transmitPayload() {
+            const text = msgInput.value.trim();
+            if (!text || !client) return;
+
+            const hexPayload = await encryptMessage(text, replyTargetData);
+            client.publish(baseTopic, JSON.stringify({ type: "data", sender: myNick, payload: hexPayload }));
+            
+            renderMessage(myNick, text, replyTargetData, true);
+            clearReplyBar();
+            msgInput.value = "";
+        }
+
+        function renderMessage(sender, text, replyData, isSelf) {
+            const wrapper = document.createElement("div");
+            wrapper.className = "msg-line";
+
+            const now = new Date().toLocaleTimeString([], { hour12: false });
+            
+            let replyMarkup = "";
+            if (replyData) {
+                replyMarkup = `<span class="msg-reply-line">&gt; [Replying to ${replyData.to}: "${escapeHTML(replyData.snippet)}"]</span>`;
+            }
+
+            wrapper.innerHTML = `
+                ${replyMarkup}
+                <span class="msg-time">[${now}]</span>
+                <span class="msg-sender ${isSelf ? 'self' : ''}" onclick="setupReplyHook('${sender}', '${escapeHTML(text)}')">&lt;${sender}&gt;</span>
+                <span class="msg-text">${escapeHTML(text)}</span>
+                <span class="reply-trigger reply-btn" onclick="setupReplyHook('${sender}', '${escapeHTML(text)}')">[r]</span>
+            `;
+
+            messagesContainer.appendChild(wrapper);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        function setupReplyHook(user, rawText) {
+            replyTargetData = { to: user, snippet: rawText.length > 20 ? rawText.slice(0,20) + "..." : rawText };
+            document.getElementById("reply-target").textContent = user;
+            replyBar.style.display = "flex";
+            msgInput.focus();
+        }
+
+        function clearReplyBar() {
+            replyTargetData = null;
+            replyBar.style.display = "none";
+        }
+
+        function escapeHTML(str) {
+            return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+        }
+
+        document.getElementById("send-btn").addEventListener("click", transmitPayload);
+        msgInput.addEventListener("keydown", (e) => { if(e.key === "Enter") transmitPayload(); });
+        document.getElementById("cancel-reply-btn").addEventListener("click", clearReplyBar);
+        updateSidebarUI();
+    </script>
 </body>
 </html>
